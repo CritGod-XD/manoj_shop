@@ -735,12 +735,11 @@ export default function BillingPage() {
             <table className="invoice-table">
               <thead>
                 <tr>
-                  <th style={{ width: '60px' }} className="col-center">S.No</th>
+                  <th style={{ width: '50px' }} className="col-center">S.No</th>
                   <th>{useTelugu ? "వస్తువు పేరు" : "Item Name"}</th>
-                  <th style={{ width: '100px' }} className="col-center">{useTelugu ? "పరిమాణం" : "Qty"}</th>
-                  <th style={{ width: '80px' }} className="col-center">{useTelugu ? "ప్రమాణం" : "Unit"}</th>
+                  <th style={{ width: '120px' }} className="col-center">{useTelugu ? "పరిమాణం" : "Qty"}</th>
                   <th style={{ width: '120px' }} className="col-right">{useTelugu ? "ధర" : "Rate"}</th>
-                  <th style={{ width: '140px' }} className="col-right">{useTelugu ? "మొత్తం" : "Amount"}</th>
+                  <th style={{ width: '130px' }} className="col-right">{useTelugu ? "మొత్తం" : "Amount"}</th>
                 </tr>
               </thead>
               <tbody>
@@ -751,8 +750,7 @@ export default function BillingPage() {
                     <tr key={idx}>
                       <td className="col-center">{idx + 1}</td>
                       <td style={{ fontWeight: 600 }}>{displayName}</td>
-                      <td className="col-center">{item.quantity}</td>
-                      <td className="col-center">{item.unit}</td>
+                      <td className="col-center">{item.quantity} {item.unit}</td>
                       <td className="col-right">₹{item.price.toFixed(2)}</td>
                       <td className="col-right" style={{ fontWeight: 600 }}>₹{itemTotal}</td>
                     </tr>
