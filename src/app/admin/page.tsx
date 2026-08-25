@@ -572,12 +572,11 @@ export default function AdminPage() {
             <table className="invoice-table">
               <thead>
                 <tr>
-                  <th style={{ width: '60px' }} className="col-center">S.No</th>
+                  <th style={{ width: '50px' }} className="col-center">S.No</th>
                   <th>Item Name</th>
-                  <th style={{ width: '100px' }} className="col-center">Qty</th>
-                  <th style={{ width: '80px' }} className="col-center">Unit</th>
+                  <th style={{ width: '120px' }} className="col-center">Qty</th>
                   <th style={{ width: '120px' }} className="col-right">Rate</th>
-                  <th style={{ width: '140px' }} className="col-right">Amount</th>
+                  <th style={{ width: '130px' }} className="col-right">Amount</th>
                 </tr>
               </thead>
               <tbody>
@@ -587,8 +586,7 @@ export default function AdminPage() {
                     <tr key={idx}>
                       <td className="col-center">{idx + 1}</td>
                       <td style={{ fontWeight: 600 }}>{item.item_name}</td>
-                      <td className="col-center">{item.quantity}</td>
-                      <td className="col-center">{item.unit}</td>
+                      <td className="col-center">{item.quantity} {item.unit}</td>
                       <td className="col-right">₹{item.price.toFixed(2)}</td>
                       <td className="col-right" style={{ fontWeight: 600 }}>₹{itemTotal}</td>
                     </tr>
