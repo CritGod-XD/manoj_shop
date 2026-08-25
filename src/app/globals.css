@@ -818,3 +818,150 @@ html, body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-light);
 }
+
+/* Mobile Responsiveness Improvements */
+.mobile-tabs-container {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .main-content {
+    padding: 0.75rem;
+  }
+  
+  .mobile-tabs-container {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 0.25rem;
+  }
+  
+  .mobile-tab-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-radius: calc(var(--radius) - 2px);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: center;
+  }
+  
+  .mobile-tab-btn.active {
+    background-color: var(--primary-color);
+    color: white;
+  }
+
+  .mobile-hidden {
+    display: none !important;
+  }
+
+  .billing-layout {
+    grid-template-columns: 1fr;
+    height: calc(100vh - 160px);
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    text-align: center;
+  }
+  
+  .navbar-brand {
+    align-items: center;
+  }
+  
+  .navbar-title {
+    font-size: 1.1rem;
+    text-align: center;
+  }
+  
+  .navbar-subtitle {
+    font-size: 0.75rem;
+  }
+  
+  .navbar-menu {
+    width: 100%;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .nav-link {
+    font-size: 0.85rem;
+    padding: 0.35rem 0.6rem;
+  }
+  
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-menu {
+    gap: 0.25rem;
+  }
+  .nav-link {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.8rem;
+  }
+  .nav-link span {
+    display: none; /* Hide text on small screens so only icons are visible */
+  }
+  
+  .catalog-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.5rem;
+  }
+  
+  .catalog-card {
+    height: 100px;
+    padding: 0.5rem;
+  }
+  
+  .catalog-card-name {
+    font-size: 0.8rem;
+  }
+  
+  .catalog-card-price {
+    font-size: 0.9rem;
+  }
+  
+  .catalog-card-stock {
+    font-size: 0.7rem;
+  }
+
+  .cart-item-row {
+    grid-template-columns: 1.8fr 1.8fr 1fr 0.4fr;
+    gap: 0.25rem;
+    padding: 0.4rem 0;
+  }
+  
+  .cart-item-name {
+    font-size: 0.8rem;
+  }
+  
+  .cart-qty-ctrl {
+    gap: 0.15rem;
+  }
+  
+  .cart-qty-input {
+    width: 35px;
+    padding: 0.1rem;
+    font-size: 0.8rem;
+  }
+  
+  .cart-qty-ctrl button {
+    padding: 0.1rem 0.25rem;
+  }
+}
