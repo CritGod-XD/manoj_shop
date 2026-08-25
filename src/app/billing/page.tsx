@@ -307,6 +307,7 @@ export default function BillingPage() {
   const [finalizedBill, setFinalizedBill] = useState<FinalizedBill | null>(null);
   const [isPrinting, setIsPrinting] = useState(false);
   const [useTelugu, setUseTelugu] = useState(false);
+  const [mobileTab, setMobileTab] = useState<'catalog' | 'cart'>('catalog');
 
   // Load catalog items and categories
   useEffect(() => {
@@ -485,10 +486,26 @@ export default function BillingPage() {
     <div className="app-container">
       <Navbar />
       <main className="main-content">
+        {/* Mobile Tab Toggle */}
+        <div className="mobile-tabs-container">
+          <button
+            onClick={() => setMobileTab('catalog')}
+            className={`mobile-tab-btn ${mobileTab === 'catalog' ? 'active' : ''}`}
+          >
+            Catalog ({items.length})
+          </button>
+          <button
+            onClick={() => setMobileTab('cart')}
+            className={`mobile-tab-btn ${mobileTab === 'cart' ? 'active' : ''}`}
+          >
+            Cart ({cart.reduce((sum, item) => sum + item.cartQuantity, 0)}) - ₹{runningTotal.toFixed(2)}
+          </button>
+        </div>
+
         <div className="billing-layout">
           
           {/* Item Catalog (Left) */}
-          <div className="billing-catalog">
+          <div className={`billing-catalog ${mobileTab !== 'catalog' ? 'mobile-hidden' : ''}`}>
             <div className="search-container">
               <div style={{ position: 'relative', flex: 1 }}>
                 <Search size={18} style={{ position: 'absolute', left: '10px', top: '10px', color: 'var(--text-light)' }} />
@@ -569,7 +586,7 @@ export default function BillingPage() {
           </div>
 
           {/* Billing Cart (Right) */}
-          <div className="billing-cart">
+          <div className={`billing-cart ${mobileTab !== 'cart' ? 'mobile-hidden' : ''}`}>
             <h3 style={{ fontSize: '1.1rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <ShoppingBag size={18} style={{ color: 'var(--primary-color)' }} />
               <span>Current Cart ({cart.length} items)</span>
