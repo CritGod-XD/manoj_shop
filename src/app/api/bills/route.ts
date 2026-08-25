@@ -67,7 +67,7 @@ export async function POST(request: Request) {
     try {
       // 1. Generate auto-incrementing bill number
       const lastBill = await db.get('SELECT MAX(id) as maxId FROM bills');
-      const nextId = (lastBill?.maxId || 0) + 1;
+      const nextId = (lastBill?.maxId || lastBill?.maxid || 0) + 1;
       const billNumber = String(nextId).padStart(6, '0');
 
       // 2. Capture current date and day
