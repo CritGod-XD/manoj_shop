@@ -88,7 +88,7 @@ export async function POST(request: Request) {
 
       // 4. Update inventory and insert bill items
       for (const item of items) {
-        const itemTotal = item.price * item.quantity;
+        const itemTotal = item.itemTotal !== undefined ? item.itemTotal : (item.price * item.quantity);
         
         // Insert item record
         await db.run(
@@ -97,9 +97,10 @@ export async function POST(request: Request) {
         );
 
         // Decrement quantity from inventory (allow stock to go negative)
+        const decrementAmount = item.inventoryQuantity !== undefined ? item.inventoryQuantity : item.quantity;
         await db.run(
           'UPDATE items SET quantity = quantity - ? WHERE name = ?',
-          [item.quantity, item.name]
+          [decrementAmount, item.name]
         );
       }
 
