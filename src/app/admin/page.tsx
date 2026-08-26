@@ -194,17 +194,19 @@ export default function AdminPage() {
         clone.style.left = '-9999px';
         clone.style.top = '0';
         clone.style.width = '1152px'; // exactly 1152px width
-        clone.style.height = '1536px'; // exactly 1536px height (3:4 aspect)
+        clone.style.height = 'auto'; // let height grow dynamically to fit all items!
+        clone.style.minHeight = '1536px'; // keep it at least 1536px tall for 3:4 aspect
         clone.style.fontSize = `${calculatedFontSize}px`; // dynamic font size
         clone.style.backgroundColor = '#fff';
         clone.style.padding = '40px';
         clone.style.boxSizing = 'border-box';
-        clone.style.overflow = 'hidden';
+        clone.style.overflow = 'visible';
 
         // Ensure the inner container fills the clone height
         const container = clone.querySelector('.a4-invoice-container') as HTMLElement;
         if (container) {
-          container.style.height = '100%';
+          container.style.height = 'auto';
+          container.style.minHeight = '100%';
           container.style.display = 'flex';
           container.style.flexDirection = 'column';
           container.style.justifyContent = 'space-between';
@@ -216,7 +218,7 @@ export default function AdminPage() {
         const canvas = await html2canvas(clone, {
           scale: 1, // exact 1:1 pixel match
           width: 1152,
-          height: 1536,
+          height: clone.offsetHeight,
           backgroundColor: '#ffffff',
           logging: false,
         });
