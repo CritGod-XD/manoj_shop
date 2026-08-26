@@ -378,7 +378,7 @@ export default function InventoryPage() {
                             {item.category}
                           </span>
                         </td>
-                        <td style={{ textAlign: 'right', fontWeight: 600 }}>₹{(item.price || 0).toFixed(2)}</td>
+                        <td style={{ textAlign: 'right', fontWeight: 600 }}>{(item.price || 0).toFixed(2)}</td>
                         <td style={{ textAlign: 'right', fontWeight: 600 }}>
                           <span className={`badge ${(item.quantity || 0) <= 10 ? ((item.quantity || 0) <= 0 ? 'badge-danger' : 'badge-warning') : 'badge-success'}`}>
                             {(item.quantity || 0).toFixed(2)}
@@ -513,15 +513,15 @@ export default function InventoryPage() {
                                 {priceChanged ? (
                                   <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '0.25rem' }}>
                                     <span style={{ textDecoration: 'line-through', color: 'var(--text-light)', fontSize: '0.8rem' }}>
-                                      ₹{origPrice.toFixed(2)}
+                                      {origPrice.toFixed(2)}
                                     </span>
                                     <ChevronRight size={12} style={{ color: 'var(--text-light)' }} />
                                     <span style={{ color: currentPrice > origPrice ? 'var(--success)' : 'var(--danger)' }}>
-                                      ₹{currentPrice.toFixed(2)}
+                                      {currentPrice.toFixed(2)}
                                     </span>
                                   </span>
                                 ) : (
-                                  <span>₹{currentPrice.toFixed(2)}</span>
+                                  <span>{currentPrice.toFixed(2)}</span>
                                 )}
                               </td>
                               <td style={{ textAlign: 'right' }}>
@@ -615,7 +615,7 @@ export default function InventoryPage() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div className="form-group">
-                  <label className="form-label">Price (₹) *</label>
+                  <label className="form-label">Price *</label>
                   <input
                     type="number"
                     step="any"
