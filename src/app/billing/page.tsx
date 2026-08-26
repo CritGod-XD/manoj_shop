@@ -28,6 +28,7 @@ interface Item {
 
 interface CartItem extends Item {
   cartQuantity: number;
+  originalUnit: string;
 }
 
 interface FinalizedBill {
@@ -39,6 +40,7 @@ interface FinalizedBill {
     quantity: number;
     price: number;
     unit: string;
+    itemTotal: number;
   }>;
   totalAmount: number;
 }
@@ -347,7 +349,7 @@ export default function BillingPage() {
             : i
         );
       }
-      return [...prevCart, { ...item, cartQuantity: 1 }];
+      return [...prevCart, { ...item, cartQuantity: 1, originalUnit: item.unit }];
     });
   };
 
@@ -361,6 +363,47 @@ export default function BillingPage() {
     );
   };
 
+  const updatePrice = (itemId: number, price: number) => {
+    setCart((prevCart) =>
+      prevCart.map((i) => (i.id === itemId ? { ...i, price: price } : i))
+    );
+  };
+
+  const updateUnit = (itemId: number, unit: string) => {
+    setCart((prevCart) =>
+      prevCart.map((i) => (i.id === itemId ? { ...i, unit: unit } : i))
+    );
+  };
+
+  const getCartItemTotal = (item: CartItem): number => {
+    if (item.unit === 'g') {
+      return (item.cartQuantity / 1000) * item.price;
+    }
+    if (item.unit === 'mg') {
+      return (item.cartQuantity / 1000000) * item.price;
+    }
+    return item.cartQuantity * item.price;
+  };
+
+  const getInventoryDecrement = (item: CartItem): number => {
+    if (item.unit === item.originalUnit) {
+      return item.cartQuantity;
+    }
+    if (item.originalUnit === 'kg') {
+      if (item.unit === 'g') return item.cartQuantity / 1000;
+      if (item.unit === 'mg') return item.cartQuantity / 1000000;
+    }
+    if (item.originalUnit === 'g') {
+      if (item.unit === 'kg') return item.cartQuantity * 1000;
+      if (item.unit === 'mg') return item.cartQuantity / 1000;
+    }
+    if (item.originalUnit === 'mg') {
+      if (item.unit === 'kg') return item.cartQuantity * 1000000;
+      if (item.unit === 'g') return item.cartQuantity * 1000;
+    }
+    return item.cartQuantity;
+  };
+
   const removeFromCart = (itemId: number) => {
     setCart((prevCart) => prevCart.filter((i) => i.id !== itemId));
   };
@@ -369,7 +412,7 @@ export default function BillingPage() {
     setCart([]);
   };
 
-  const runningTotal = cart.reduce((sum, item) => sum + item.price * item.cartQuantity, 0);
+  const runningTotal = cart.reduce((sum, item) => sum + getCartItemTotal(item), 0);
 
   // Finalize bill and print
   const handleFinalizeAndPrint = async () => {
@@ -384,7 +427,9 @@ export default function BillingPage() {
             name: i.name,
             quantity: i.cartQuantity,
             price: i.price,
-            unit: i.unit
+            unit: i.unit,
+            itemTotal: getCartItemTotal(i),
+            inventoryQuantity: getInventoryDecrement(i)
           })),
           totalAmount: runningTotal
         })
@@ -401,7 +446,8 @@ export default function BillingPage() {
             name: i.name,
             quantity: i.cartQuantity,
             price: i.price,
-            unit: i.unit
+            unit: i.unit,
+            itemTotal: getCartItemTotal(i)
           })),
           totalAmount: runningTotal
         };
@@ -423,17 +469,36 @@ export default function BillingPage() {
     try {
       // Force element to be temporarily visible on screen for capture
       const clone = element.cloneNode(true) as HTMLElement;
-      clone.style.display = 'block';
+      clone.style.display = 'flex';
+      clone.style.flexDirection = 'column';
+      clone.style.justifyContent = 'space-between';
       clone.style.position = 'fixed';
       clone.style.left = '-9999px';
       clone.style.top = '0';
-      clone.style.width = '800px'; // width on screen for clean A4 aspect rendering
+      clone.style.width = '1152px'; // exactly 1152px width
+      clone.style.height = '1536px'; // exactly 1536px height (3:4 aspect)
+      clone.style.fontSize = '36px'; // 50% larger font size for 1152px base width
       clone.style.backgroundColor = '#fff';
-      clone.style.padding = '20px';
+      clone.style.padding = '40px';
+      clone.style.boxSizing = 'border-box';
+      clone.style.overflow = 'hidden';
+
+      // Ensure the inner container fills the clone height
+      const container = clone.querySelector('.a4-invoice-container') as HTMLElement;
+      if (container) {
+        container.style.height = '100%';
+        container.style.display = 'flex';
+        container.style.flexDirection = 'column';
+        container.style.justifyContent = 'space-between';
+        container.style.boxSizing = 'border-box';
+      }
+
       document.body.appendChild(clone);
 
       const canvas = await html2canvas(clone, {
-        scale: 2, // high res
+        scale: 1, // exact 1:1 pixel match
+        width: 1152,
+        height: 1536,
         backgroundColor: '#ffffff',
         logging: false,
       });
@@ -498,7 +563,7 @@ export default function BillingPage() {
             onClick={() => setMobileTab('cart')}
             className={`mobile-tab-btn ${mobileTab === 'cart' ? 'active' : ''}`}
           >
-            Cart ({cart.reduce((sum, item) => sum + item.cartQuantity, 0)}) - ₹{runningTotal.toFixed(2)}
+            Cart ({cart.reduce((sum, item) => sum + item.cartQuantity, 0)}) - {runningTotal.toFixed(2)}
           </button>
         </div>
 
@@ -566,7 +631,7 @@ export default function BillingPage() {
                       >
                         <div className="catalog-card-name">{item.name}</div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '0.5rem' }}>
-                          <span className="catalog-card-price">₹{item.price.toFixed(2)}</span>
+                          <span className="catalog-card-price">{item.price.toFixed(2)}</span>
                           <span 
                             className="catalog-card-stock"
                             style={{ 
@@ -611,8 +676,44 @@ export default function BillingPage() {
                     <div key={item.id} className="cart-item-row">
                       <div className="cart-item-name">
                         {item.name}
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                          ₹{item.price.toFixed(2)} / {item.unit}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', marginTop: '0.25rem' }}>
+                          <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-muted)' }}>Rate:</span>
+                          <input
+                            type="number"
+                            step="any"
+                            value={item.price}
+                            onChange={(e) => updatePrice(item.id, parseFloat(e.target.value) || 0)}
+                            style={{
+                              width: '75px',
+                              padding: '0.2rem 0.3rem',
+                              fontSize: '0.9rem',
+                              border: '1px solid var(--border-color)',
+                              borderRadius: '4px',
+                              backgroundColor: 'var(--card-background)',
+                              color: 'var(--text-main)',
+                            }}
+                          />
+                          <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>/</span>
+                          <select
+                            value={item.unit}
+                            onChange={(e) => updateUnit(item.id, e.target.value)}
+                            style={{
+                              padding: '0.2rem 0.3rem',
+                              fontSize: '0.9rem',
+                              border: '1px solid var(--border-color)',
+                              borderRadius: '4px',
+                              backgroundColor: 'var(--card-background)',
+                              color: 'var(--text-main)',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            <option value="kg">kg</option>
+                            <option value="g">g</option>
+                            <option value="mg">mg</option>
+                            {item.originalUnit !== 'kg' && item.originalUnit !== 'g' && item.originalUnit !== 'mg' && (
+                              <option value={item.originalUnit}>{item.originalUnit}</option>
+                            )}
+                          </select>
                         </div>
                       </div>
                       
@@ -640,8 +741,37 @@ export default function BillingPage() {
                         </button>
                       </div>
 
-                      <div style={{ textAlign: 'right', fontWeight: 600, fontSize: '0.9rem' }}>
-                        ₹{(item.price * item.cartQuantity).toFixed(2)}
+                      <div style={{ textAlign: 'right' }}>
+                        <input
+                          type="number"
+                          step="any"
+                          value={getCartItemTotal(item) === 0 ? '' : parseFloat(getCartItemTotal(item).toFixed(2))}
+                          onChange={(e) => {
+                            const newTotal = parseFloat(e.target.value) || 0;
+                            let newPrice = 0;
+                            if (item.cartQuantity > 0) {
+                              if (item.unit === 'g') {
+                                newPrice = newTotal / (item.cartQuantity / 1000);
+                              } else if (item.unit === 'mg') {
+                                newPrice = newTotal / (item.cartQuantity / 1000000);
+                              } else {
+                                newPrice = newTotal / item.cartQuantity;
+                              }
+                            }
+                            updatePrice(item.id, newPrice);
+                          }}
+                          style={{
+                            width: '80px',
+                            padding: '0.2rem 0.3rem',
+                            fontSize: '0.95rem',
+                            fontWeight: 700,
+                            textAlign: 'right',
+                            border: '1px solid var(--border-color)',
+                            borderRadius: '4px',
+                            backgroundColor: 'var(--card-background)',
+                            color: 'var(--text-main)',
+                          }}
+                        />
                       </div>
 
                       <div style={{ textAlign: 'right' }}>
@@ -663,7 +793,7 @@ export default function BillingPage() {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: '1.1rem', fontWeight: 700 }}>GRAND TOTAL:</span>
                 <span style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--primary-color)' }}>
-                  ₹{runningTotal.toFixed(2)}
+                  {runningTotal.toFixed(2)}
                 </span>
               </div>
 
@@ -745,14 +875,14 @@ export default function BillingPage() {
               <tbody>
                 {finalizedBill.items.map((item, idx) => {
                   const displayName = useTelugu ? translateItemNameToTelugu(item.name) : item.name;
-                  const itemTotal = (item.quantity * item.price).toFixed(2);
+                  const itemTotal = item.itemTotal.toFixed(2);
                   return (
                     <tr key={idx}>
                       <td className="col-center">{idx + 1}</td>
                       <td style={{ fontWeight: 600 }}>{displayName}</td>
                       <td className="col-center">{item.quantity} {item.unit}</td>
-                      <td className="col-right">₹{item.price.toFixed(2)}</td>
-                      <td className="col-right" style={{ fontWeight: 600 }}>₹{itemTotal}</td>
+                      <td className="col-right">{item.price.toFixed(2)}</td>
+                      <td className="col-right" style={{ fontWeight: 600 }}>{itemTotal}</td>
                     </tr>
                   );
                 })}
@@ -775,7 +905,7 @@ export default function BillingPage() {
                 </div>
                 <div className="invoice-totals-row grand-total">
                   <span>{useTelugu ? "మొత్తం:" : "Grand Total:"}</span>
-                  <span className="invoice-totals-val">₹{finalizedBill.totalAmount.toFixed(2)}</span>
+                  <span className="invoice-totals-val">{finalizedBill.totalAmount.toFixed(2)}</span>
                 </div>
               </div>
             </div>
