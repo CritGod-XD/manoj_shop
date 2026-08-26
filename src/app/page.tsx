@@ -104,7 +104,7 @@ export default function DashboardPage() {
             </div>
             <div className="stat-info">
               <span className="stat-label">Today's Sales</span>
-              <span className="stat-value">₹{data.todaySales.toFixed(2)}</span>
+              <span className="stat-value">{data.todaySales.toFixed(2)}</span>
             </div>
           </div>
 
@@ -171,7 +171,7 @@ export default function DashboardPage() {
                         <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>{bill.bill_number}</td>
                         <td>{bill.date} ({bill.day_of_week})</td>
                         <td>{bill.total_items} items</td>
-                        <td style={{ textAlign: 'right', fontWeight: 600 }}>₹{bill.total_amount.toFixed(2)}</td>
+                        <td style={{ textAlign: 'right', fontWeight: 600 }}>{bill.total_amount.toFixed(2)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -209,7 +209,7 @@ export default function DashboardPage() {
                     {data.lowStockItems.map((item) => (
                       <tr key={item.id}>
                         <td style={{ fontWeight: 500 }}>{item.name}</td>
-                        <td style={{ textAlign: 'right' }}>₹{item.price.toFixed(2)}</td>
+                        <td style={{ textAlign: 'right' }}>{item.price.toFixed(2)}</td>
                         <td style={{ textAlign: 'right' }}>
                           <span className={`badge ${item.quantity <= 0 ? 'badge-danger' : 'badge-warning'}`}>
                             {item.quantity} {item.unit}
