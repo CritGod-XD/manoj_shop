@@ -561,12 +561,12 @@ html, body {
   font-weight: 700;
   text-transform: uppercase;
   font-size: 1em;
-  padding: 0.75em 0.5em;
+  padding: 0.5em 0.5em;
   text-align: left;
 }
 
 .invoice-table td {
-  padding: 0.75em 0.5em;
+  padding: 0.5em 0.5em;
   border-bottom: 1px solid #e2e8f0;
   font-size: 1.15em;
   color: #1e293b;
