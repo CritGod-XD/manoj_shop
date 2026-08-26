@@ -179,6 +179,13 @@ export default function AdminPage() {
       if (!element) return;
 
       try {
+        // Calculate font size dynamically to fit all items in the 1536px height
+        const itemCount = bill.items ? bill.items.length : 0;
+        let calculatedFontSize = 38;
+        if (itemCount > 6) {
+          calculatedFontSize = Math.max(18, Math.round(38 - (itemCount - 6) * 1.3));
+        }
+
         const clone = element.cloneNode(true) as HTMLElement;
         clone.style.display = 'flex';
         clone.style.flexDirection = 'column';
@@ -188,7 +195,7 @@ export default function AdminPage() {
         clone.style.top = '0';
         clone.style.width = '1152px'; // exactly 1152px width
         clone.style.height = '1536px'; // exactly 1536px height (3:4 aspect)
-        clone.style.fontSize = '36px'; // 50% larger font size for 1152px base width
+        clone.style.fontSize = `${calculatedFontSize}px`; // dynamic font size
         clone.style.backgroundColor = '#fff';
         clone.style.padding = '40px';
         clone.style.boxSizing = 'border-box';
