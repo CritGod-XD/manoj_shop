@@ -437,16 +437,47 @@ html, body {
     margin: 0 !important;
     padding: 0 !important;
     font-family: var(--font-sans) !important;
-    font-size: 13pt !important;
+    font-size: 16pt !important; /* Increased print base size */
     line-height: 1.4 !important;
     color: #000 !important;
     background: #fff !important;
   }
 
-  /* Reset browser margin-header-footers */
+  /* Reset browser margin-header-footers to minimal to save space */
   @page {
     size: A4 portrait;
-    margin: 12mm 15mm 15mm 15mm;
+    margin: 5mm; /* Reduced print margin */
+  }
+
+  /* Target table elements to increase font size to 200%+ for item name and cost */
+  #receipt-print-area .invoice-table th {
+    font-size: 1.8em !important; /* 180% size for headers */
+    padding: 0.3em 0.4em !important;
+  }
+
+  #receipt-print-area .invoice-table td {
+    font-size: 2.2em !important; /* 220% size for item name, quantity, rate, amount */
+    padding: 0.3em 0.4em !important;
+  }
+
+  /* Totals and notes section font size increase */
+  #receipt-print-area .invoice-totals-box {
+    font-size: 2em !important;
+  }
+
+  #receipt-print-area .invoice-info-notes {
+    font-size: 1.5em !important;
+  }
+
+  #receipt-print-area .invoice-footer {
+    font-size: 1.8em !important;
+    margin-top: 2em !important;
+  }
+  
+  /* Remove extra margins / paddings on the invoice container to avoid spilling */
+  #receipt-print-area .a4-invoice-container {
+    padding: 0 !important;
+    max-width: 100% !important;
   }
 }
 
